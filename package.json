@@ -1,0 +1,19 @@
+{
+  "shortname": "nec",
+  "name": "node-ecosystem-cli",
+  "version": "0.0.0",
+  "description": "A command line interface for the node ecosystem.",
+  "keywords": [
+
+  ],
+  "author": "Elve",
+  "license": "MIT",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "devDependencies": {
+    "eslint": "^8.12.0"
+  }
+}
