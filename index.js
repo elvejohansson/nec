@@ -22,16 +22,11 @@ function sleep(ms = 2000) {
  * @param {string} entry - The entry that the user selected.
  * @returns {bool} false if the user doesn't want to exit, otherwise expect the process to exit.
  */
-async function checkExit(entry) {
+function checkExit(entry) {
 	if (entry !== "Exit") {
 		return false;
 	}
-	
-	console.log("\nExiting...");
-	sleep(250)
-		.then(() => process.exit(1))
-		.catch(err => console.error(err));
-	return true;
+	process.exit(1);
 }
 
 /**
@@ -115,19 +110,10 @@ async function main() {
 			when: answers => answers.entry === "Create a new project",
 			default: true
 		},
-		{
-			type: "confirm",
-			name: "checkInput",
-			message: "Is this the correct configuration?",
-			when: answers => {
-				answers.entry === "Create a new project";
-				console.log(answers);
-			},
-		}
 	];
 
 	const answers = await inquirer.prompt(questions);
-	await checkExit(answers.entry);
+	checkExit(answers.entry);
 
 	createProject(answers.projectName, answers.useGit, answers.useNode);
 }
