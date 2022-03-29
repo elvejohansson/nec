@@ -3,7 +3,16 @@
 import chalkAnimation from "chalk-animation";
 import inquirer from "inquirer";
 
-const sleep = (ms = 2000) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * Function for sleeping the application for a certain amount of time (in milliseconds).
+ * Default is 2000 milliseconds.
+ * @param {number} milliseconds - The number of milliseconds to sleep. 
+ * @returns {Promise} A promise that resolves after the specified number of milliseconds.
+ */
+function sleep(ms = 2000) {
+	new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /**
  * Function for checking the chosen entry and exiting the application if the user selected "Exit.".
@@ -21,6 +30,7 @@ async function checkExit(entry) {
 		.catch(err => console.error(err));
 	return true;
 }
+
 
 async function header() {
 	const title = chalkAnimation.rainbow("\nWelcome to NEC - the Node Ecosystem CLI!\n");
