@@ -37,69 +37,100 @@ async function checkExit(entry) {
 /**
  * Function for creating a new project.
  * @param {string} projectName - The name of the project.
- * @param {bool} useGit - Whether or not to use git.
+ * @param {bool} useGit - Whether or not to use Git.
+ * @param {bool} useNode - Whether or not to use Node.
  */
-function createProject(projectName, useGit) {
+function createProject(projectName, useGit, useNode) {
 	console.log("\nCreating project " + chalk.blue(projectName ) + "...");
 	fs.mkdirSync(projectName);
+	process.chdir(projectName);
 
 	if (useGit) {
-		process.chdir(projectName);
 		execSync("git init");
+	}
+	if (useNode) {
+		execSync("npm init -y");
 	}
 
 	sleep(500);
 }
 
+/**
+ * Function for displaying the header.
+ * @returns {Promise} A promise that resolves after the header is displayed.
+ */
 async function header() {
 	const title = chalkAnimation.rainbow("\nWelcome to NEC - the Node Ecosystem CLI!\n");
 
 	await sleep();
 	title.stop();
 	console.clear();
+}
 
-	inquirer
-		.prompt([{
+/**
+ * Main function for the application.
+ * @returns {Promise} A promise that resolves after the application is finished.
+ */
+async function main() {
+	await header();
+
+	const questions = [
+		{
 			type: "list",
 			name: "entry",
 			message: "What do you want to do?",
 			choices: [
-				"Create project",
+				"Create a new project",
 				"Exit"
 			]
-		}, {
+		},
+		{
 			type: "input",
 			name: "projectName",
 			message: "What is the name of your project?",
-			when: answers => answers.entry === "Create project",
+			when: answers => answers.entry === "Create a new project",
 			validate: projectName => {
-				if (projectName.length < 1) {
-					return "Please enter a valid project name.";
+				if (!projectName.length) {
+					return "Please enter a project name.";
 				}
+
 				if (fs.existsSync(projectName)) {
 					return "A project with that name already exists.";
 				}
 
 				return true;
 			}
-		}, {
+		},
+		{
 			type: "confirm",
 			name: "useGit",
-			message: "Do you want to use git?",
-			default: "yes",
-			when: answers => answers.entry === "Create project"
-		}])
-		.then(answers => {
-			checkExit(answers.entry);
+			message: "Do you want to use Git?",
+			when: answers => answers.entry === "Create a new project",
+			default: true
+		},
+		{
+			type: "confirm",
+			name: "useNode",
+			message: "Do you want to use Node?",
+			when: answers => answers.entry === "Create a new project",
+			default: true
+		},
+		{
+			type: "confirm",
+			name: "checkInput",
+			message: "Is this the correct configuration?",
+			when: answers => {
+				answers.entry === "Create a new project";
+				console.log(answers);
+			},
+		}
+	];
 
-			if (answers.entry === "Create project") {
-				createProject(answers.projectName, answers.useGit);
-			}
-		})
-		.catch(err => {
-			console.error(err);
-		});
+	const answers = await inquirer.prompt(questions);
+	await checkExit(answers.entry);
+
+	createProject(answers.projectName, answers.useGit, answers.useNode);
 }
 
 console.clear();
-await header();
+await main();
