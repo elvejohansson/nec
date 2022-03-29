@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 
+import fs from "node:fs";
+import { execSync } from "node:child_process";
+import chalk from "chalk";
 import chalkAnimation from "chalk-animation";
 import inquirer from "inquirer";
 
@@ -31,6 +34,22 @@ async function checkExit(entry) {
 	return true;
 }
 
+/**
+ * Function for creating a new project.
+ * @param {string} projectName - The name of the project.
+ * @param {bool} useGit - Whether or not to use git.
+ */
+function createProject(projectName, useGit) {
+	console.log("\nCreating project " + chalk.blue(projectName ) + "...");
+	fs.mkdirSync(projectName);
+
+	if (useGit) {
+		process.chdir(projectName);
+		execSync("git init");
+	}
+
+	sleep(500);
+}
 
 async function header() {
 	const title = chalkAnimation.rainbow("\nWelcome to NEC - the Node Ecosystem CLI!\n");
@@ -40,18 +59,42 @@ async function header() {
 	console.clear();
 
 	inquirer
-		.prompt({
+		.prompt([{
 			type: "list",
 			name: "entry",
 			message: "What do you want to do?",
 			choices: [
 				"Create project",
-				"Modify existing project",
 				"Exit"
 			]
-		})
+		}, {
+			type: "input",
+			name: "projectName",
+			message: "What is the name of your project?",
+			when: answers => answers.entry === "Create project",
+			validate: projectName => {
+				if (projectName.length < 1) {
+					return "Please enter a valid project name.";
+				}
+				if (fs.existsSync(projectName)) {
+					return "A project with that name already exists.";
+				}
+
+				return true;
+			}
+		}, {
+			type: "confirm",
+			name: "useGit",
+			message: "Do you want to use git?",
+			default: "yes",
+			when: answers => answers.entry === "Create project"
+		}])
 		.then(answers => {
 			checkExit(answers.entry);
+
+			if (answers.entry === "Create project") {
+				createProject(answers.projectName, answers.useGit);
+			}
 		})
 		.catch(err => {
 			console.error(err);
