@@ -11,7 +11,7 @@ import inquirer from "inquirer";
  * @returns {Promise} A promise that resolves after the specified number of milliseconds.
  */
 function sleep(ms = 2000) {
-	new Promise(resolve => setTimeout(resolve, ms));
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
