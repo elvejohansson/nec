@@ -22,10 +22,14 @@ function sleep(ms = 2000) {
  * @param {string} entry - The entry that the user selected.
  * @returns {bool} false if the user doesn't want to exit, otherwise expect the process to exit.
  */
-function checkExit(entry) {
+async function checkExit(entry) {
 	if (entry !== "Exit") {
 		return false;
 	}
+
+	chalkAnimation.rainbow("\nExiting...\n");
+	await sleep(1000);
+	console.clear();
 	process.exit(1);
 }
 
@@ -35,19 +39,31 @@ function checkExit(entry) {
  * @param {bool} useGit - Whether or not to use Git.
  * @param {bool} useNode - Whether or not to use Node.
  */
-function createProject(projectName, useGit, useNode) {
-	console.log("\nCreating project " + chalk.blue(projectName ) + "...");
+function createProject(projectName, useGit, useNode, useTemplate, template) {
+	console.log("\nCreating project folder " + chalk.blue(projectName ) + "...");
 	fs.mkdirSync(projectName);
 	process.chdir(projectName);
 
 	if (useGit) {
 		execSync("git init");
 	}
-	if (useNode) {
+
+	if (useNode && !useTemplate) {
 		execSync("npm init -y");
+	} else if (useNode && useTemplate) {
+		switch (template) {
+		case "React":
+			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA")}.`);
+			execSync("npx create-react-app ./");
+			break;
+		default:
+			console.log("Template not found, aborting...");
+			break;
+		}
 	}
 
-	sleep(500);
+	sleep(300);
+	console.log(`\n${chalk.greenBright("Done!")}\n`);
 }
 
 /**
@@ -57,7 +73,7 @@ function createProject(projectName, useGit, useNode) {
 async function header() {
 	const title = chalkAnimation.rainbow("\nWelcome to NEC - the Node Ecosystem CLI!\n");
 
-	await sleep();
+	await sleep(1500);
 	title.stop();
 	console.clear();
 }
@@ -110,12 +126,34 @@ async function main() {
 			when: answers => answers.entry === "Create a new project",
 			default: true
 		},
+		{
+			type: "confirm",
+			name: "useTemplate",
+			message: "Do you want to use a template for your project?",
+			when: answers => answers.useNode === true,
+			default: false,
+		},
+		{
+			type: "list",
+			name: "template",
+			message: "Choose a template:",
+			when: answers => answers.useTemplate === true,
+			choices: [
+				"React",
+			]
+		}
 	];
 
 	const answers = await inquirer.prompt(questions);
-	checkExit(answers.entry);
+	await checkExit(answers.entry);
 
-	createProject(answers.projectName, answers.useGit, answers.useNode);
+	createProject(
+		answers.projectName,
+		answers.useGit,
+		answers.useNode,
+		answers.useTemplate,
+		answers.template
+	);
 }
 
 console.clear();
