@@ -39,7 +39,7 @@ async function checkExit(entry) {
  * @param {bool} useGit - Whether or not to use Git.
  * @param {bool} useNode - Whether or not to use Node.
  */
-function createProject(projectName, useGit, useNode, useTemplate, template) {
+async function createProject(projectName, useGit, useNode, useTemplate, template) {
 	console.log("\nCreating project folder " + chalk.blue(projectName ) + "...");
 	fs.mkdirSync(projectName);
 	process.chdir(projectName);
@@ -62,7 +62,7 @@ function createProject(projectName, useGit, useNode, useTemplate, template) {
 		}
 	}
 
-	sleep(300);
+	await sleep(300);
 	console.log(`\n${chalk.greenBright("Done!")}\n`);
 }
 
@@ -140,6 +140,7 @@ async function main() {
 			when: answers => answers.useTemplate === true,
 			choices: [
 				"React",
+				"daw"
 			]
 		}
 	];
