@@ -1,5 +1,13 @@
 #!/usr/bin/env node
 
+/**
+ * NEC - the Node Ecosystem CLI
+ * 
+ * Copyright (c) 2022 Elve Johansson 
+ * Released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
 import fs from "node:fs";
 import { execSync } from "node:child_process";
 import chalk from "chalk";
