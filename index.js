@@ -39,7 +39,7 @@ async function checkExit(entry) {
  * @param {bool} useGit - Whether or not to use Git.
  * @param {bool} useNode - Whether or not to use Node.
  */
-async function createProject(projectName, useGit, useNode, useTemplate, template) {
+async function createProject(projectName, useGit, useNode, useYarn, useTemplate, template) {
 	console.log("\nCreating project folder " + chalk.blue(projectName ) + "...");
 	fs.mkdirSync(projectName);
 	process.chdir(projectName);
@@ -50,24 +50,25 @@ async function createProject(projectName, useGit, useNode, useTemplate, template
 	}
 
 	if (useNode && !useTemplate) {
-		execSync("npm init -y");
+		useYarn ? execSync("yarn init -y") : execSync("npm init -y");
+		
 	} else if (useNode && useTemplate) {
 		switch (template) {
 		case "React":
 			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA")}.`);
-			execSync("npx create-react-app ./");
+			useYarn ? execSync("yarn create react-app ./") : execSync("npx create-react-app ./");
 			break;
 		case "React (Redux)":
 			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA (Redux template)")}.`);
-			execSync("npx create-react-app ./ --template redux");
+			useYarn ? execSync("yarn create react-app ./ --template redux") : execSync("npx create-react-app ./ --template redux");
 			break;
 		case "React (TypeScript)":
 			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA (TypeScript template)")}.`);
-			execSync("npx create-react-app ./ --template typescript");
+			useYarn ? execSync("yarn create react-app ./ --template typescript") : execSync("npx create-react-app ./ --template typescript");
 			break;
 		case "React (TypeScript + Redux)":
 			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA (TypeScript + Redux template)")}.`);
-			execSync("npx create-react-app ./ --template typescript-redux");
+			useYarn ? execSync("yarn create react-app ./ --template typescript-redux") : execSync("npx create-react-app ./ --template typescript-redux");
 			break;
 		default:
 			console.log("Template not found, aborting...");
@@ -141,6 +142,13 @@ async function main() {
 		},
 		{
 			type: "confirm",
+			name: "useYarn",
+			message: "Do you want to use Yarn instead of NPM?",
+			when: answers => answers.useNode === true,
+			default: false,
+		},
+		{
+			type: "confirm",
 			name: "useTemplate",
 			message: "Do you want to use a template for your project?",
 			when: answers => answers.useNode === true,
@@ -167,6 +175,7 @@ async function main() {
 		answers.projectName,
 		answers.useGit,
 		answers.useNode,
+		answers.useYarn,
 		answers.useTemplate,
 		answers.template
 	);
