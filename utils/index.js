@@ -21,7 +21,7 @@ function sleep(ms = 2000) {
  * @param {string} entry - The entry that the user selected.
  * @returns {bool} false if the user doesn't want to exit, otherwise expect the process to exit.
  */
- async function checkExit(entry) {
+async function checkExit(entry) {
 	if (entry !== "Exit") {
 		return false;
 	}

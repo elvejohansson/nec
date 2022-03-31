@@ -17,7 +17,7 @@ import inquirer from "inquirer";
 import {
 	sleep,
 	checkExit
-} from "./utils/index.js";
+} from "./utils";
 
 
 /**
@@ -151,6 +151,7 @@ async function main() {
 				"React (Redux)",
 				"React (TypeScript)",
 				"React (TypeScript + Redux)",
+
 			]
 		}
 	];
