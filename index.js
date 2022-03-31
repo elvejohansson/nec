@@ -43,6 +43,7 @@ async function createProject(projectName, useGit, useNode, useTemplate, template
 	console.log("\nCreating project folder " + chalk.blue(projectName ) + "...");
 	fs.mkdirSync(projectName);
 	process.chdir(projectName);
+	await sleep(250);
 
 	if (useGit) {
 		execSync("git init");
@@ -55,6 +56,18 @@ async function createProject(projectName, useGit, useNode, useTemplate, template
 		case "React":
 			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA")}.`);
 			execSync("npx create-react-app ./");
+			break;
+		case "React (Redux)":
+			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA (Redux template)")}.`);
+			execSync("npx create-react-app ./ --template redux");
+			break;
+		case "React (TypeScript)":
+			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA (TypeScript template)")}.`);
+			execSync("npx create-react-app ./ --template typescript");
+			break;
+		case "React (TypeScript + Redux)":
+			console.log(`Creating ${chalk.blue("React")} application with ${chalk.blue("CRA (TypeScript + Redux template)")}.`);
+			execSync("npx create-react-app ./ --template typescript-redux");
 			break;
 		default:
 			console.log("Template not found, aborting...");
@@ -140,7 +153,9 @@ async function main() {
 			when: answers => answers.useTemplate === true,
 			choices: [
 				"React",
-				"daw"
+				"React (Redux)",
+				"React (TypeScript)",
+				"React (TypeScript + Redux)",
 			]
 		}
 	];
