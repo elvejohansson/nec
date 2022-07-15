@@ -1,15 +1,14 @@
 {
+  "name": "@elvejohansson/nec",
   "shortname": "nec",
-  "name": "node-ecosystem-cli",
-  "version": "0.0.0",
   "description": "A command line interface for the node ecosystem.",
-  "keywords": [],
-  "author": "Elve",
+  "author": "Elve Johansson",
   "license": "MIT",
   "type": "module",
   "main": "index.js",
+  "bin": "./index.js",
   "scripts": {
-    "start": "node --experimental-specifier-resolution=node index.js"
+    "start": "node index.js"
   },
   "devDependencies": {
     "eslint": "^8.12.0"
